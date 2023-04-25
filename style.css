@@ -1,58 +1,96 @@
 body {
-  text-align: center;
-  position: relative;
-  margin: 0;
-  padding: 0;
+  background-color: #eee;
+  font-family: Arial, sans-serif;
 }
 
 h1 {
-  font-size: 3rem;
-  margin-top: 2rem;
+  font-size: 48px;
+  text-align: left;
+  margin: 10px 0 30px 10px;
 }
 
 #cow {
-  width: 300px;
-  height: 300px;
-  margin-top: 2rem;
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  width: 200px;
+  height: 200px;
   cursor: pointer;
-  animation: rotate 1s linear infinite;
+}
+
+#clicker {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 10px;
 }
 
 #milk {
-  font-size: 2rem;
-  margin-top: 1rem;
+  position: absolute;
+  top: 70px;
+  left: 270px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 #menu {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin: 1rem;
-}
-
-.button {
-  background-color: #ffac33;
-  color: white;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease-in-out;
-}
-
-.button:hover {
-  transform: translateY(-3px);
-  box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.3);
+  top: 150px;
+  right: 50px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .upgrade {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  text-align: right;
+  width: 50px;
+  height: 50px;
+  background-color: #ccc;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+.upgrade.farm {
+  background-image: url('farm.png');
+  background-size: contain;
+}
+
+.upgrade.business {
+  background-image: url('business.png');
+  background-size: contain;
+}
+
+.upgrade.ranch {
+  background-image: url('ranch.png');
+  background-size: contain;
+}
+
+.upgrade.farmer {
+  background-image: url('farmer.png');
+  background-size: contain;
+}
+
+.button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #3e8e41;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
