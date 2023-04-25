@@ -96,4 +96,46 @@ function upgradeToBusiness() {
   updateCupDisplay();
 }
 
-function upgrade
+function upgradeToCorporation() {
+  clickValue = 10;
+  cupPrice = 1000;
+  const corporationUpgrade = document.getElementById("corporation-upgrade");
+  corporationUpgrade.style.display = "none";
+  updateCupDisplay();
+}
+
+// Add event listeners to the upgrade buttons
+document.getElementById("farm-upgrade").addEventListener("click", upgradeToFarm);
+document.getElementById("business-upgrade").addEventListener("click", upgradeToBusiness);
+document.getElementById("corporation-upgrade").addEventListener("click", upgradeToCorporation);
+
+// Add event listener to the reset button
+document.getElementById("reset-button").addEventListener("click", function() {
+  cupsOfMilk = 0;
+  clickValue = 1;
+  cupPrice = 10;
+  farmers = 0;
+  farmerPrice = 10;
+  clearInterval(autoInterval);
+  updateCupDisplay();
+  updateFarmerDisplay();
+  const farmUpgrade = document.getElementById("farm-upgrade");
+  farmUpgrade.textContent = "Upgrade to Farm ($100)";
+  farmUpgrade.removeEventListener("click", upgradeToFarm);
+  farmUpgrade.addEventListener("click", upgradeToFarm);
+  const businessUpgrade = document.getElementById("business-upgrade");
+  businessUpgrade.style.display = "inline-block";
+  businessUpgrade.textContent = "Upgrade to Business ($500)";
+  businessUpgrade.removeEventListener("click", upgradeToBusiness);
+  businessUpgrade.addEventListener("click", upgradeToBusiness);
+  const corporationUpgrade = document.getElementById("corporation-upgrade");
+  corporationUpgrade.style.display = "inline-block";
+  corporationUpgrade.textContent = "Upgrade to Corporation ($1000)";
+  corporationUpgrade.removeEventListener("click", upgradeToCorporation);
+  corporationUpgrade.addEventListener("click", upgradeToCorporation);
+});
+
+// Call the initial update functions
+updateCupDisplay();
+updateFarmerDisplay();
+
