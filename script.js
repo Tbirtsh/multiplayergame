@@ -8,6 +8,9 @@ let ranch = 0;
 let farmCost = 100;
 let businessCost = 1000;
 let ranchCost = 10000;
+let farmer = 0;
+let farmerCost = 10;
+let autoMilkInterval;
 
 // Define functions
 function milkCow() {
@@ -53,10 +56,29 @@ function buyRanch() {
   }
 }
 
+function buyFarmer() {
+  if (milk >= farmerCost) {
+    milk -= farmerCost;
+    farmer++;
+    farmerCost *= 1.1;
+    updateMilk();
+    updateUpgrades();
+    if (!autoMilkInterval) {
+      autoMilkInterval = setInterval(autoMilk, 1000);
+    }
+  }
+}
+
+function autoMilk() {
+  milk += farmer;
+  updateMilk();
+}
+
 function updateUpgrades() {
   document.getElementById("farm").innerHTML = `Farm (${farm}): ${farmCost} cups of milk`;
   document.getElementById("business").innerHTML = `Business (${business}): ${businessCost} cups of milk`;
   document.getElementById("ranch").innerHTML = `Ranch (${ranch}): ${ranchCost} cups of milk`;
+  document.getElementById("farmer").innerHTML = `Farmer (${farmer}): ${farmerCost} cups of milk`;
 }
 
 // Add event listeners
@@ -64,6 +86,7 @@ document.getElementById("cow").addEventListener("click", milkCow);
 document.getElementById("buy-farm").addEventListener("click", buyFarm);
 document.getElementById("buy-business").addEventListener("click", buyBusiness);
 document.getElementById("buy-ranch").addEventListener("click", buyRanch);
+document.getElementById("buy-farmer").addEventListener("click", buyFarmer);
 
 // Update initial values
 updateMilk();
