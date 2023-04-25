@@ -1,9 +1,9 @@
 // Set up variables
-let cupsOfMilk = 0;
-let cupPrice = 10;
-let clickValue = 1;
-let farmers = 0;
-let farmerPrice = 10;
+let cupsOfMilk = 20;
+let cupPrice = 0;
+let clickValue = 5;
+let farmers = 2;
+let farmerPrice = 0;
 let autoInterval;
 
 // Set up DOM references
