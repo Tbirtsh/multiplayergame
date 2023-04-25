@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <style>
+      /* Add your admin page styles here */
+    </style>
+  </head>
+  <body>
+    <h1>Admin Page</h1>
+
+    <div id="status">
+      Server status: <span id="status-text"></span>
+    </div>
+
+    <button id="start-button" onclick="startServer()">Start Server</button>
+    <button id="stop-button" onclick="stopServer()">Stop Server</button>
+
+    <div id="log">
+      Debug log:<br>
+      <textarea id="log-textarea" rows="10" cols="50" readonly></textarea>
+    </div>
+
+    <script>
+      // Add your admin page JavaScript code here
+
+      const statusText = document.getElementById('status-text');
+      const logTextarea = document.getElementById('log-textarea');
+
+      let server = null;
+
+      function log(message) {
+        logTextarea.value += message + '\n';
+        logTextarea.scrollTop = logTextarea.scrollHeight;
+      }
+
+      function setStatus(status) {
+        statusText.textContent = status;
+      }
+
+      function startServer() {
+        if (server) {
+          log('Server is already running');
+          return;
+        }
+
+        server = new WebSocket('ws://localhost:3000');
+
+        server.addEventListener('open', () => {
+          setStatus('running');
+          log('Server started');
+        });
+
+        server.addEventListener('message', (event) => {
+          log(event.data);
+        });
+
+        server.addEventListener('close', () => {
+          server = null;
+          setStatus('stopped');
+          log('Server stopped');
+        });
+      }
+
+      function stopServer() {
+        if (!server) {
+          log('Server is not running');
+          return;
+        }
+
+        server.close();
+      }
+    </script>
+  </body>
+</html>
