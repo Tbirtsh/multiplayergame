@@ -40,28 +40,29 @@
       }
 
       function startServer() {
-        if (server) {
-          log('Server is already running');
-          return;
-        }
+  if (server) {
+    log('Server is already running');
+    return;
+  }
 
-        server = new WebSocket('ws://localhost:3000');
+  server = new WebSocket('ws://localhost:3000');
 
-        server.addEventListener('open', () => {
-          setStatus('running');
-          log('Server started');
-        });
+  server.addEventListener('open', () => {
+    setStatus('running');
+    log('Server started');
+  });
 
-        server.addEventListener('message', (event) => {
-          log(event.data);
-        });
+  server.addEventListener('message', (event) => {
+    log(event.data);
+  });
 
-        server.addEventListener('close', () => {
-          server = null;
-          setStatus('stopped');
-          log('Server stopped');
-        });
-      }
+  server.addEventListener('close', () => {
+    server = null;
+    setStatus('stopped');
+    log('Server stopped');
+  });
+}
+
 
       function stopServer() {
         if (!server) {
