@@ -1,56 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Cow Clicker</title>
-	<style>
-		body {
-			text-align: center;
-		}
-
-		h1 {
-			font-size: 3rem;
-			margin-top: 2rem;
-		}
-
-		#cow {
-			width: 300px;
-			height: 300px;
-			margin-top: 2rem;
-			cursor: pointer;
-			animation: rotate 1s linear infinite;
-		}
-
-		#milk {
-			font-size: 2rem;
-			margin-top: 1rem;
-		}
-
-		@keyframes rotate {
-			0% {
-				transform: rotate(0deg);
-			}
-			100% {
-				transform: rotate(360deg);
-			}
-		}
-	</style>
+  <meta charset="UTF-8">
+  <title>Cow Clicker</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<h1>Cow Clicker</h1>
-	<img src="cute-cow-removebg-preview.png" alt="Cow" id="cow" onclick="milkCow()">
-	<div id="milk">Milk: 0</div>
-
-	<script>
-		let milk = 0;
-
-		function milkCow() {
-			milk += 1;
-			document.getElementById("milk").innerHTML = "Milk: " + milk;
-
-			if (milk % 10 == 0) {
-				alert("You have filled " + milk/10 + " cups of milk!");
-			}
-		}
-	</script>
+  <h1>Cow Clicker</h1>
+  <img src="cute-cow-removebg-preview.png" alt="Cow" id="cow">
+  <p id="milk">0 cups of milk</p>
+  <div id="menu">
+    <div class="upgrade" id="farm"></div>
+    <button class="button" id="buy-farm">Buy Farm</button>
+    <div class="upgrade" id="business"></div>
+    <button class="button" id="buy-business">Buy Business</button>
+    <div class="upgrade" id="ranch"></div>
+    <button class="button" id="buy-ranch">Buy Ranch</button>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
