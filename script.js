@@ -1,93 +1,57 @@
-// Define variables
 let milk = 0;
-let cowMilked = 0;
-let plotOfLand = 1;
-let farm = 0;
-let business = 0;
-let ranch = 0;
-let farmCost = 100;
-let businessCost = 1000;
-let ranchCost = 10000;
-let farmer = 0;
-let farmerCost = 10;
-let autoMilkInterval;
+let autoClickers = 0;
+let autoClickerPrice = 10;
+let upgrades = [
+  { name: "Farm", price: 50 },
+  { name: "Business", price: 1000 },
+  { name: "Ranch", price: 5000 },
+  { name: "Farmer", price: autoClickerPrice }
+];
 
-// Define functions
-function milkCow() {
-  milk += plotOfLand;
-  cowMilked++;
-  updateMilk();
+function updateMilkDisplay() {
+  document.getElementById("milk").textContent = "Milk: " + milk.toFixed(0);
 }
 
-function updateMilk() {
-  document.getElementById("milk").innerHTML = `${milk} cups of milk`;
+function updateAutoClickerDisplay() {
+  document.getElementById("auto-clickers").textContent = "Auto-Clickers: " + autoClickers;
 }
 
-function buyFarm() {
-  if (milk >= farmCost) {
-    milk -= farmCost;
-    farm++;
-    plotOfLand *= 2;
-    farmCost *= 2;
-    updateMilk();
-    updateUpgrades();
+function updateUpgradeDisplay() {
+  let menu = document.getElementById("menu");
+  menu.innerHTML = "";
+  for (let i = 0; i < upgrades.length; i++) {
+    let upgrade = upgrades[i];
+    let button = document.createElement("button");
+    button.classList.add("upgrade");
+    button.classList.add(upgrade.name.toLowerCase());
+    button.textContent = upgrade.name + " (" + upgrade.price.toFixed(0) + ")";
+    button.disabled = milk < upgrade.price;
+    button.addEventListener("click", function() {
+      milk -= upgrade.price;
+      upgrade.price *= 1.1;
+      if (upgrade.name === "Farmer") {
+        autoClickers++;
+        updateAutoClickerDisplay();
+        upgrade.price = Math.ceil(autoClickerPrice * Math.pow(1.1, autoClickers));
+        button.textContent = upgrade.name + " (" + upgrade.price.toFixed(0) + ")";
+      }
+      updateMilkDisplay();
+      updateUpgradeDisplay();
+    });
+    menu.appendChild(button);
   }
 }
 
-function buyBusiness() {
-  if (milk >= businessCost) {
-    milk -= businessCost;
-    business++;
-    plotOfLand *= 2;
-    businessCost *= 10;
-    updateMilk();
-    updateUpgrades();
-  }
-}
+document.getElementById("cow").addEventListener("click", function() {
+  milk += 1;
+  updateMilkDisplay();
+});
 
-function buyRanch() {
-  if (milk >= ranchCost) {
-    milk -= ranchCost;
-    ranch++;
-    plotOfLand *= 2;
-    ranchCost *= 100;
-    updateMilk();
-    updateUpgrades();
-  }
-}
+setInterval(function() {
+  milk += autoClickers;
+  updateMilkDisplay();
+}, 1000);
 
-function buyFarmer() {
-  if (milk >= farmerCost) {
-    milk -= farmerCost;
-    farmer++;
-    farmerCost *= 1.1;
-    updateMilk();
-    updateUpgrades();
-    if (!autoMilkInterval) {
-      autoMilkInterval = setInterval(autoMilk, 1000);
-    }
-  }
-}
-
-function autoMilk() {
-  milk += farmer;
-  updateMilk();
-}
-
-function updateUpgrades() {
-  document.getElementById("farm").innerHTML = `Farm (${farm}): ${farmCost} cups of milk`;
-  document.getElementById("business").innerHTML = `Business (${business}): ${businessCost} cups of milk`;
-  document.getElementById("ranch").innerHTML = `Ranch (${ranch}): ${ranchCost} cups of milk`;
-  document.getElementById("farmer").innerHTML = `Farmer (${farmer}): ${farmerCost} cups of milk`;
-}
-
-// Add event listeners
-document.getElementById("cow").addEventListener("click", milkCow);
-document.getElementById("buy-farm").addEventListener("click", buyFarm);
-document.getElementById("buy-business").addEventListener("click", buyBusiness);
-document.getElementById("buy-ranch").addEventListener("click", buyRanch);
-document.getElementById("buy-farmer").addEventListener("click", buyFarmer);
-
-// Update initial values
-updateMilk();
-updateUpgrades();
+updateMilkDisplay();
+updateAutoClickerDisplay();
+updateUpgradeDisplay();
