@@ -1,96 +1,278 @@
 body {
-  background-color: #eee;
+  background-color: #f8f8f8;
+  margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
 }
 
-h1 {
-  font-size: 48px;
-  text-align: left;
-  margin: 10px 0 30px 10px;
+#cow-container {
+  position: relative;
+  width: 400px;
+  margin: 0 auto;
+  padding: 20px 0;
 }
 
 #cow {
   position: absolute;
-  top: 50px;
-  left: 50px;
-  width: 200px;
-  height: 200px;
+  left: 50%;
+  transform: translateX(-50%);
   cursor: pointer;
 }
 
-#clicker {
+#milk-stream {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  padding: 10px;
-  background-color: #fff;
-  border-radius: 10px;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 100%;
+  background-color: #ffffff;
+  opacity: 0.8;
+  transition: height 0.2s ease-in-out;
 }
 
-#milk {
+#farmer-container {
   position: absolute;
-  top: 70px;
-  left: 270px;
-  font-size: 24px;
-  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+}
+
+.farmer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: farmerMove 1s ease-in-out infinite;
+}
+
+@keyframes farmerMove {
+  0% {
+    bottom: 0;
+  }
+  50% {
+    bottom: 20px;
+  }
+  100% {
+    bottom: 0;
+  }
+}
+
+#clicker-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+#clicker {
+  font-size: 1.5rem;
+  background-color: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
 }
 
 #menu {
   position: absolute;
-  top: 150px;
+  top: 50%;
   right: 50px;
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 5px;
+  padding: 10px;
 }
 
-.upgrade {
+.menu-item {
+  margin: 10px;
+}
+
+.menu-item h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.menu-item ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item li {
+  font-size: 1rem;
+  padding: 5px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.menu-item li:hover {
+  background-color: #f8f8f8;
+}
+
+.menu-item li.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.menu-item li.disabled:hover {
+  background-color: inherit;
+  cursor: default;
+}
+
+#cups-of-milk {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.cup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background-image: url(cup.png);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.8;
+  animation: cupMove 1s ease-in-out infinite alternate;
+}
+
+@keyframes cupMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(0, 20px);
+  }
+}
+
+.farmer {
+  position: absolute;
+  top: 100px;
+  left: 100px;
   width: 50px;
   height: 50px;
-  background-color: #ccc;
-  margin-bottom: 10px;
-  border-radius: 10px;
+  background-image: url(farmer.png);
+  background-size: cover;
+  background-position: center;
+  animation: farmerMove 1s ease-in-out infinite alternate;
 }
 
-.upgrade.farm {
-  background-image: url('farm.png');
-  background-size: contain;
+@keyframes farmerMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(0, 10px);
+  }
 }
 
-.upgrade.business {
-  background-image: url('business.png');
-  background-size: contain;
+.cow {
+  position: absolute;
+  top: 150px;
+  left: 200px;
+  width: 100px;
+  height: 100px;
+  background-image: url(cow.png);
+  background-size: cover;
+  background-position: center;
 }
 
-.upgrade.ranch {
-  background-image: url('ranch.png');
-  background-size: contain;
-}
-
-.upgrade.farmer {
-  background-image: url('farmer.png');
-  background-size: contain;
-}
-
-.button {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  background-color: #4CAF50;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
+.clicker {
+  position: absolute;
+  top: 200px;
+  left: 300px;
+  width: 50px;
+  height: 50px;
+  background-image: url(clicker.png);
+  background-size: cover;
+  background-position: center;
   cursor: pointer;
 }
 
-.button:hover {
-  background-color: #3e8e41;
+.upgrades {
+  position: absolute;
+  top: 100px;
+  right: 50px;
+  width: 200px;
+  height: 300px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  overflow-y: scroll;
 }
 
-.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.upgrades::-webkit-scrollbar {
+  width: 10px;
 }
+
+.upgrades::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.upgrades::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+.upgrades::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.upgrade-button {
+  display: block;
+  margin: 10px auto;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: #3498db;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.upgrade-button:hover {
+  background-color: #2980b9;
+}
+
+.menu {
+  position: absolute;
+  top: 200px;
+  right: 50px;
+  width: 200px;
+  height: 100px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+}
+
+.menu h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  text-align: center;
+}
+
+.menu p {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  text-align: center;
+}
+
