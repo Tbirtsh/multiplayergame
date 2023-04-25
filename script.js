@@ -32,6 +32,22 @@ farmerContainer.addEventListener("click", function() {
   }
 });
 
+function buyFarmer() {
+  if (cupsOfMilk >= farmerPrice) {
+    cupsOfMilk -= farmerPrice;
+    farmers++;
+    farmerPrice = Math.round(farmerPrice * 1.1);
+    updateCupDisplay();
+    updateFarmerDisplay();
+    animateFarmers();
+
+    // Start auto-milking if needed
+    if (farmers === 1) {
+      startAuto();
+    }
+  }
+}
+
 // Start auto-milking when enough farmers are bought
 function startAuto() {
   autoInterval = setInterval(function() {
