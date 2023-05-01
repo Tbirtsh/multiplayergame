@@ -1,44 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Cow Clicker</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <title>Collaborative Text Editor</title>
+  <style>
+    #editor {
+      width: 100%;
+      height: 500px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-  <div id="cow-container">
-    <img id="cow" src="cute-cow-removebg-preview.png" alt="Cow">
-    <div id="milk-stream"></div>
-    <div id="farmer-container"></div>
-  </div>
-  <div id="clicker-container">
-    <h1>Cow Clicker</h1>
-    <p id="cups-of-milk"></p>
-    <button id="clicker">Click the Cow</button>
-  </div>
-  <div id="menu">
-    <div class="menu-item">
-      <h2>Upgrades</h2>
-      <ul>
-        <li id="farm-upgrade">Upgrade to Farm ($100)</li>
-        <li id="business-upgrade" style="display: none;">Upgrade to Business ($500)</li>
-        <li id="corporation-upgrade" style="display: none;">Upgrade to Corporation ($1000)</li>
-      </ul>
-    </div>
-    <div class="menu-item">
-      <h2>Auto</h2>
-      <ul>
-       <li id="farmer-button">Hire Farmer ($10)</li>
+  <h1>Collaborative Text Editor</h1>
+  <div id="editor" contenteditable="true"></div>
+  <button id="join-btn">Join Document</button>
 
-      </ul>
-    </div>
-    <div class="menu-item">
-      <h2>Reset</h2>
-      <ul>
-        <li><button id="reset-button">Reset</button></li>
-      </ul>
-    </div>
-  </div>
-  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const editor = document.querySelector('#editor');
+    const joinBtn = document.querySelector('#join-btn');
+
+    let doc = '';
+
+    const supabase = createClient('https://sxmflndnwqkwyamtdwie.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4bWZsbmRud3Frd3lhbXRkd2llIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODI5NDg4NTcsImV4cCI6MTk5ODUyNDg1N30.EgMjMv4DS96mK25oZYVKgaterhwLWzQ_Ayy-g_D66Sg');
+
+    joinBtn.addEventListener('click', async () => {
+      const { data: documents, error } = await supabase
+        .from('documents')
+        .select('id, offer');
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      const documentId = prompt('Enter document ID:');
+
+      const document = documents.find((d) => d.id === documentId);
+
+      if (!document) {
+        console.error('Document not found');
+        return;
+      }
+
+      // Parse the WebRTC offer and create a connection
+      const connection = new RTCPeerConnection();
+
+      connection.onicecandidate = (event) => {
+        if (event.candidate) {
+          // Send the ICE candidate to the other peer
+          supabase
+            .from('documents')
+            .update({
+              ice_candidate: JSON.stringify(event.candidate),
+            })
+            .match({ id: documentId });
+        }
+      };
+
+      const channel = connection.createDataChannel('document');
+      channel.binaryType = 'arraybuffer';
+
+      channel.onopen = () => {
+        console.log('Data channel opened');
+        channel.send(doc);
+      };
+
+      channel.onmessage = (event) => {
+        console.log('Received message:', event.data);
+        doc = event.data;
+        editor.textContent = doc;
+
+        supabase
+          .from('documents')
+          .update({
+            document: doc,
+          })
+          .match({ id: documentId });
+      };
+
+      console.log('Creating data channel');
+
+      const offer = JSON.parse(document.offer);
+
+      // Set the remote WebRTC offer and create an answer
+      connection.setRemoteDescription(offer).then(() => {
+        console.log('Creating answer');
+        connection.createAnswer().then((answer) => {
+          console.log('Setting local description');
+          connection.setLocalDescription(answer).then(() => {
+            // Send the WebRTC answer to the other peer
+            supabase
+              .from('documents')
+              .update({
+                answer: JSON.stringify(answer),
+              })
+              .match({ id: documentId });
+          });
+        });
+      });
+    });
+  </script>
 </body>
 </html>
