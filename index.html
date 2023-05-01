@@ -1,106 +1,86 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Collaborative Text Editor</title>
-  <style>
-    #editor {
-      width: 100%;
-      height: 500px;
-      font-size: 16px;
-    }
-  </style>
-</head>
-<body>
-  <h1>Collaborative Text Editor</h1>
-  <div id="editor" contenteditable="true"></div>
-  <button id="join-btn">Join Document</button>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script>
-    const editor = document.querySelector('#editor');
-    const joinBtn = document.querySelector('#join-btn');
-
-    let doc = '';
-
-    const supabase = createClient('https://sxmflndnwqkwyamtdwie.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4bWZsbmRud3Frd3lhbXRkd2llIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODI5NDg4NTcsImV4cCI6MTk5ODUyNDg1N30.EgMjMv4DS96mK25oZYVKgaterhwLWzQ_Ayy-g_D66Sg');
-
-    joinBtn.addEventListener('click', async () => {
-      const { data: documents, error } = await supabase
-        .from('documents')
-        .select('id, offer');
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      const documentId = prompt('Enter document ID:');
-
-      const document = documents.find((d) => d.id === documentId);
-
-      if (!document) {
-        console.error('Document not found');
-        return;
-      }
-
-      // Parse the WebRTC offer and create a connection
-      const connection = new RTCPeerConnection();
-
-      connection.onicecandidate = (event) => {
-        if (event.candidate) {
-          // Send the ICE candidate to the other peer
-          supabase
-            .from('documents')
-            .update({
-              ice_candidate: JSON.stringify(event.candidate),
-            })
-            .match({ id: documentId });
-        }
-      };
-
-      const channel = connection.createDataChannel('document');
-      channel.binaryType = 'arraybuffer';
-
-      channel.onopen = () => {
-        console.log('Data channel opened');
-        channel.send(doc);
-      };
-
-      channel.onmessage = (event) => {
-        console.log('Received message:', event.data);
-        doc = event.data;
-        editor.textContent = doc;
-
-        supabase
-          .from('documents')
-          .update({
-            document: doc,
-          })
-          .match({ id: documentId });
-      };
-
-      console.log('Creating data channel');
-
-      const offer = JSON.parse(document.offer);
-
-      // Set the remote WebRTC offer and create an answer
-      connection.setRemoteDescription(offer).then(() => {
-        console.log('Creating answer');
-        connection.createAnswer().then((answer) => {
-          console.log('Setting local description');
-          connection.setLocalDescription(answer).then(() => {
-            // Send the WebRTC answer to the other peer
-            supabase
-              .from('documents')
-              .update({
-                answer: JSON.stringify(answer),
-              })
-              .match({ id: documentId });
-          });
+  <head>
+    <meta charset="UTF-8">
+    <title>Supabase Text Documents</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.17.2"></script>
+  </head>
+  <body>
+    <h1>Supabase Text Documents</h1>
+    
+    <div>
+      <label for="doc-name">Document Name:</label>
+      <input type="text" id="doc-name">
+    </div>
+    
+    <div>
+      <label for="doc-content">Document Content:</label>
+      <textarea id="doc-content"></textarea>
+    </div>
+    
+    <button id="create-doc">Create Document</button>
+    <button id="join-doc">Join Document</button>
+    
+    <script>
+      const supabaseUrl = 'https://sxmflndnwqkwyamtdwie.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4bWZsbmRud3Frd3lhbXRkd2llIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODI5NDg4NTcsImV4cCI6MTk5ODUyNDg1N30.EgMjMv4DS96mK25oZYVKgaterhwLWzQ_Ayy-g_D66Sg';
+      
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      
+      const docNameInput = document.getElementById('doc-name');
+      const docContentInput = document.getElementById('doc-content');
+      const createDocButton = document.getElementById('create-doc');
+      const joinDocButton = document.getElementById('join-doc');
+      
+      let docId = null;
+      let currentText = '';
+      
+      createDocButton.addEventListener('click', async () => {
+        const { data, error } = await supabase.from('documents').insert({
+          name: docNameInput.value,
+          content: docContentInput.value
         });
+        if (error) {
+          console.error(error);
+        } else {
+          docId = data[0].id;
+          currentText = docContentInput.value;
+          alert(`Document "${docNameInput.value}" created with ID ${docId}`);
+        }
       });
-    });
-  </script>
-</body>
+      
+      joinDocButton.addEventListener('click', async () => {
+        if (!docId) {
+          alert('Please create a document first.');
+          return;
+        }
+        const { data, error } = await supabase.from('documents').select('content').eq('id', docId).single();
+        if (error) {
+          console.error(error);
+        } else {
+          currentText = data.content;
+          docContentInput.value = currentText;
+          alert(`Joined document "${docNameInput.value}" with ID ${docId}`);
+          
+          supabase.from('documents').on('UPDATE', ({ new: newData }) => {
+            if (newData.id === docId) {
+              currentText = newData.content;
+              docContentInput.value = currentText;
+            }
+          }).subscribe();
+        }
+      });
+      
+            setInterval(async () => {
+        if (docId && currentText !== docContentInput.value) {
+          const { error } = await supabase.from('documents').update({ content: docContentInput.value }).eq('id', docId);
+          if (error) {
+            console.error(error);
+          } else {
+            currentText = docContentInput.value;
+          }
+        }
+      }, 1000);
+    </script>
+  </body>
 </html>
